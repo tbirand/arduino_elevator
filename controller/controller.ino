@@ -9,7 +9,7 @@
 #define KAT1 9
 #define KAT2 10
 #define KAT3 11
-#define KAT4 12
+#define KATX 12
 #define KAT5 13
 
 void clr()
@@ -135,26 +135,26 @@ void zero()
 
 void LoopDisplay()
 {
-  //  one();
-  //  delay(1000);
-  //  two();
-  //  delay(1000);
-  //  three();
-  //  delay(1000);
-  //  four();
-  //  delay(1000);
-  //  five();
-  //  delay(1000);
-  //  six();
-  //  delay(1000);
-  //  seven();
-  //  delay(1000);
-  //  eight();
-  //  delay(1000);
-  //  nine();
-  //  delay(1000);
-  //  zero();
-  //  delay(1000);
+//  one();
+//  delay(1000);
+//  two();
+//  delay(1000);
+//  three();
+//  delay(1000);
+//  four();
+//  delay(1000);
+//  five();
+//  delay(1000);
+//  six();
+//  delay(1000);
+//  seven();
+//  delay(1000);
+//  eight();
+//  delay(1000);
+//  nine();
+//  delay(1000);
+//  zero();
+//  delay(1000);
 }
 
 void setup()
@@ -170,19 +170,20 @@ void setup()
   pinMode(KAT1, INPUT);
   pinMode(KAT2, INPUT);
   pinMode(KAT3, INPUT);
-  pinMode(KAT4, INPUT);
+  pinMode(KATX, INPUT);
   pinMode(KAT5, INPUT);
 
-  goTo(5);
+  goTo(1);
 
   Serial.begin(9600);
   Serial.println("Starting\n");
 }
 bool on = false;
-int currentFloor;
+int currentFloor = 1;
 
 void goTo(int floor) {
   currentFloor = floor;
+  Serial.println(floor);
   switch (floor) {
     case 0:
       zero();
@@ -216,33 +217,77 @@ void goTo(int floor) {
       break;
   }
 }
-
+int btnPressed = 1;
 void loop()
 {
-  int test = digitalRead(KAT1);
+  int btn1, btn2, btn3, btn4, btn5;
+  
+  
+  if(!on) {
+    btn1 = digitalRead(KAT1);
+    btn2 = digitalRead(KAT2);
+    btn3 = digitalRead(KAT3);
+    btn4 = digitalRead(KATX);
+    btn5 = digitalRead(KAT5);
+  }
 
-  if (test == HIGH && !on) {
+  if (btn1 == HIGH && !on) {
+    btnPressed = 1;
+  }
+  else if (btn2 == HIGH && !on) {
+    btnPressed = 2;
+  }
+  else if (btn3 == HIGH && !on) {
+    btnPressed = 3;
+  }
+  else if (btn4 == HIGH && !on) {
+    btnPressed = 4;
+    Serial.println("BTN 4");
+  }
+  else if (btn5 == HIGH && !on) {
+    btnPressed = 5;
+    Serial.println("BTN 5");
+  }
+
+  if(currentFloor > btnPressed) {
     on = true;
-    Serial.println("On");
-    if (currentFloor == 1)
-      for (int i = 1; i <= 5; i++) {
-        goTo(i);
-        delay(1000);
-      }
-    else {
-      for (int i = currentFloor; i >= 1; i--) {
-        goTo(i);
-        delay(1000);
-      }
+    for(int i=currentFloor;i>=btnPressed;i--) {
+      goTo(i);
+      delay(1000);
     }
-  }
-
-  if (test == LOW && on) {
     on = false;
-    Serial.println("Off");
   }
+  else if(currentFloor < btnPressed) {
+    on = true;
+    for(int i=currentFloor;i<=btnPressed;i++) {
+      goTo(i);
+      delay(1000);
+    }
+    on = false;
+  }
+  
+//  if (btn1 == HIGH && !on) {
+//    on = true;
+//    Serial.println("On");
+//    if (currentFloor == 1)
+//      for (int i = 1; i <= 5; i++) {
+//        goTo(i);
+//        delay(1000);
+//    }
+//    else {
+//      for (int i = currentFloor; i >= 1; i--) {
+//        goTo(i);
+//        delay(1000);
+//      }
+//    }
+//  }
+//
+//  if (test == LOW && on) {
+//    on = false;
+//    Serial.println("Off");
+//  }
 
   delay(100);
 
-  LoopDisplay();
+  // LoopDisplay();
 }
